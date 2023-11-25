@@ -1,28 +1,63 @@
 import { createSlice } from "@reduxjs/toolkit";
+import {getContacts, addContact, deleteContact} from 'api/api'
 
 export const contactSlice = createSlice({
   name: 'contacts',
   initialState: {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
+    loading: false,
+    error: null,
   },
 
-  reducers: {
-    addContact(state, action) {
-      state.contacts = [...state.contacts, action.payload];
+  extraReducers: {
+    [getContacts.pending]: (state, action) => {
+      state.loading = true;
+      state.error = null;
     },
 
-    deleteContact(state, action) {
-      state.contacts = state.contacts.filter(
-        contact => contact.id !== action.payload
-      );
+    [getContacts.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.contacts = action.payload;
     },
-  },
+
+    [getContacts.error]: (state, action) => {
+      state.error = true;
+      state.loading = true;
+    },
+
+    [addContact.pending]: (state, action) => {
+      state.loading = true;
+      state.error = null;
+    },
+
+    [addContact.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.contacts.push(action.payload)
+    },
+
+    [addContact.error]: (state, action) => {
+      state.error = true;
+      state.loading = true;
+    },
+
+    [deleteContact.pending]: (state, action) => {
+      state.loading = true;
+      state.error = null;
+    },
+
+    [deleteContact.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      const index = state.contacts.findIndex((contact) => contact.id === action.payload.id);
+      state.contacts.splice(index, 1)
+    },
+
+    [deleteContact.error]: (state, action) => {
+      state.error = true;
+      state.loading = true;
+    },
+  }
 });
 
-export const { addContact, deleteContact } = contactSlice.actions;
 export const contactReducer = contactSlice.reducer;

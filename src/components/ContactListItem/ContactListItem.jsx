@@ -1,5 +1,6 @@
-import { deleteContact } from 'redux/contactsSlice';
 import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { getContacts, deleteContact } from 'api/api';
 
 export const ContactListItem = () => {
   const dispatch = useDispatch();
@@ -9,6 +10,10 @@ export const ContactListItem = () => {
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(filter.toLowerCase())
   );
+
+  useEffect(() => {
+    dispatch(getContacts());
+  }, [dispatch]);
 
   return (
     <>
